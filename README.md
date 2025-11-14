@@ -1,7 +1,3 @@
-Beleza, vou resumir bem e deixar em formato “txt de bloco de notas”:
-
----
-
 Protótipo Arpiagrama – Instruções de Execução
 
 1. Requisitos
