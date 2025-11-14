@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR" lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Criação</title>
+  <script src="http://172.20.3.40:3000/socket.io/socket.io.js">
+    socket.on('limpar', pagina => {
+      if (pagina === window.location.pathname.split("/").pop()) {
+        document.getElementById('mensagens').innerHTML = '';
+      }
+    });
+
+    socket.on('redirecionar', pagina => {
+      window.location.href = pagina;
+    });
+</script>
+  <script>
+    const socket = io();
+    socket.emit('pagina', 'criar.html');
+    let entradaAtiva = false;
+    socket.on('mensagem', msg => {
+      socket.emit('criarMensagem', msg);
+      const div = document.getElementById('mensagens');
+      const p = document.createElement('p');
+      p.textContent = msg;
+      div.appendChild(p);
+    });
+    socket.on('permiteEntrada', permitido => {
+      entradaAtiva = permitido;
+      document.getElementById('entradaTexto').disabled = !permitido;
+      document.getElementById('enviarTexto').disabled = !permitido;
+    });
+    function enviarTexto() {
+      if (entradaAtiva) {
+        const texto = document.getElementById('entradaTexto').value;
+        socket.emit('respostaUsuario', texto);
+        document.getElementById('entradaTexto').value = '';
+      }
+    }
+  
+    socket.on('limpar', pagina => {
+      if (pagina === window.location.pathname.split("/").pop()) {
+        document.getElementById('mensagens').innerHTML = '';
+      }
+    });
+
+    socket.on('redirecionar', pagina => {
+      window.location.href = pagina;
+    });
+</script>
+
+<style>
+/* Botões responsivos */
+button {
+  padding: 1rem 2rem;
+  font-size: 1.5rem;
+  border-radius: 8px;
+}
+@media (max-width: 768px) {
+  button {
+    width: 100%;
+    font-size: 1.25rem;
+  }
+}
+
+/* Cursor de alto contraste (substitua high-contrast-cursor.cur pelo seu arquivo de cursor) */
+body {
+  cursor: url('high-contrast-cursor.cur'), auto;
+}
+
+/* Placeholder de alto contraste em criar.html */
+input::placeholder {
+  color: #000 !important;
+  opacity: 1;
+  font-size: 1.25rem;
+}
+input {
+  background-color: #fff;
+  color: #000;
+}
+</style>
+
+</head>
+<body role="main">
+
+<style>
+  body.high-contrast {
+    background-color: #000 !important;
+    color: #fff !important;
+  }
+  body.high-contrast button {
+    background-color: #ff0 !important;
+    color: #000 !important;
+  }
+  button, input[type="text"] {
+    font-size: 1.2em;
+    padding: 12px 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  h1, p {
+    font-size: 1.4em;
+  }
+  *:focus {
+    outline: 3px solid #00f;
+    outline-offset: 2px;
+  }
+</style>
+<script>
+  function toggleContrast() {
+    const contrast = document.body.classList.toggle('high-contrast');
+    localStorage.setItem('highContrast', contrast);
+  }
+  window.onload = () => {
+    if (localStorage.getItem('highContrast') === 'true') {
+      document.body.classList.add('high-contrast');
+    }
+  };
+
+    socket.on('limpar', pagina => {
+      if (pagina === window.location.pathname.split("/").pop()) {
+        document.getElementById('mensagens').innerHTML = '';
+      }
+    });
+
+    socket.on('redirecionar', pagina => {
+      window.location.href = pagina;
+    });
+</script>
+
+<div style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+  <button onclick="location.href='index.html'" aria-label="Voltar ao início">Início</button>
+  <button onclick="location.href='autodescricao.html'" aria-label="Ir para autodescrição">Autodescrição</button>
+  <button onclick="location.href='descricaointerativa.html'" aria-label="Ir para descrição interativa">Descrição Interativa</button>
+  <button onclick="location.href='criar.html'" aria-label="Ir para página de criação">Criar</button>
+</div>
+<div style="position: fixed; top: 10px; right: 10px; z-index: 10000;">
+  <button onclick="toggleContrast()" aria-label="Ativar ou desativar alto contraste">Contraste</button>
+</div>
+  <h1>Criação de diagramas de caso de uso</h1>
+  <div id="mensagens">Agora vamos criar um diagrama de caso de uso e você poderá interagir usando teclado e
+     mouse ou via comando de voz. Sempre que desejar definir ou redefinir um elemento, coloque no canto inferior direito da mesa interativa (célula C3)</div>
+  <input type="text" id="entradaTexto" placeholder="Digite algo..." disabled>
+  <button id="enviarTexto" onclick="enviarTexto()" disabled>Enviar</button>
+  
+<script>
+function speakText(text) {
+  if ('speechSynthesis' in window) {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'pt-BR';
+    window.speechSynthesis.speak(utterance);
+  }
+}
+document.addEventListener('DOMContentLoaded', () => {
+  const container = document.getElementById('mensagens');
+  if (container) {
+    const observer = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        mutation.addedNodes.forEach(node => {
+          if (node.nodeType === Node.ELEMENT_NODE && node.tagName === 'P') {
+            speakText(node.textContent);
+          }
+        });
+      });
+    });
+    observer.observe(container, { childList: true });
+  }
+});
+</script>
+
+</body>
+</html>
